@@ -8,7 +8,7 @@ Welcome to DocuDodge, a state-of-the-art Flask application leveraging AI, specif
 - **Responsive Design**: Optimized for a variety of devices, ensuring a consistent user experience.
 
 ## Technical Setup
-1. Clone the repository: `git clone [repository-link]`.
+1. Clone the repository: `git clone [https://github.com/ark-232/DocuDodge]`.
 2. Enter the project directory: `cd docudodge`.
 3. Install dependencies: `pip install -r requirements.txt`.
 4. Run the Flask server: `python run.py`.
