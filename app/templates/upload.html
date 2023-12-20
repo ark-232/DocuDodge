@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DocuDodge - Upload</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+      .header {
+        text-align: center;
+        padding: 20px;
+      }
+      .container {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+      }
+      .column {
+        width: 45%;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .column pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        text-align: left;
+        overflow-x: auto;
+        margin-top: 20px;
+      }
+      .column pre code {
+        font-family: "Courier New", monospace;
+        line-height: 1.5;
+      }
+      #file-input {
+        display: none;
+      }
+      .upload-btn {
+        background-color: #008cba;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        text-align: center;
+        display: block;
+        margin: 20px auto;
+      }
+      .upload-btn:hover {
+        background-color: #005f73;
+      }
+      .loading-bar {
+        height: 4px;
+        background-color: #3498db;
+        transition: width 0.4s;
+        width: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>DocuDodge - Code Commenting Tool</h1>
+      <label for="file-input" class="upload-btn">Choose File</label>
+      <input type="file" id="file-input" onchange="displayFileContent()" />
+      <button class="upload-btn" onclick="commentFile()">Comment File</button>
+    </div>
+    <div class="container">
+      <div class="column" id="file-content">
+        <h2>Original Code</h2>
+        <pre><code></code></pre>
+      </div>
+      <div class="column" id="comments">
+        <h2>Comments</h2>
+        <pre><code></code></pre>
+      </div>
+    </div>
+    <div id="loading-bar" class="loading-bar"></div>
+    <script src="{{ url_for('static', filename='upload.js') }}"></script>
+  </body>
+</html>

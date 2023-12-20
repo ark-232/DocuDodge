@@ -1,0 +1,32 @@
+annotated-types==0.6.0
+anyio==4.2.0
+attrs @ file:///private/tmp/python-attrs-20231125-8821-bnb03y/attrs-23.1.0
+autopep8==2.0.2
+certifi==2023.7.22
+charset-normalizer==3.3.2
+cryptography @ file:///private/tmp/python-cryptography-20231024-6375-1k9sys9/cryptography-41.0.5
+distro==1.8.0
+h11==0.14.0
+httpcore==1.0.2
+httpx==0.25.2
+idna==3.4
+iniconfig==2.0.0
+Jinja2 @ file:///private/tmp/python-jinja-20231112-5434-1yb7qop/Jinja2-3.1.2
+mpmath @ file:///private/tmp/python-mpmath-20231112-5361-l6cha0/mpmath-1.3.0
+networkx @ file:///private/tmp/python-networkx-20231112-5620-1n6waxd/networkx-3.2.1/dist/networkx-3.2.1-py3-none-any.whl#sha256=9d72450cd74f1e630af85739ac9967362e2a7ebe03d3164ce3af0659ab910890
+openai==1.5.0
+packaging==23.2
+pbr @ file:///private/tmp/python-pbr-20231123-5189-6at10n/pbr-6.0.0
+pluggy==1.3.0
+protobuf==4.25.1
+pycodestyle==2.10.0
+pydantic==2.5.2
+pydantic_core==2.14.5
+pytest==7.4.2
+python-dateutil @ file:///private/tmp/python-dateutil-20231119-5156-1u9krby/python-dateutil-2.8.2
+requests==2.31.0
+six==1.16.0
+sniffio==1.3.0
+tqdm==4.66.1
+typing_extensions==4.9.0
+urllib3==2.0.7
