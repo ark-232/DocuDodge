@@ -43,3 +43,21 @@ a {
 .gradient-btn:hover {
   opacity: 0.9;
 }
+
+/* Add this to your existing globals.css */
+.syntax-highlighter::-webkit-scrollbar {
+  width: 8px;
+}
+
+.syntax-highlighter::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.syntax-highlighter::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.syntax-highlighter::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
