@@ -72,3 +72,39 @@ a {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+
+
+code, pre {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+
+.dark-gradient-bg {
+  background: linear-gradient(to bottom right, #1a1a2e, #16213e);
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #4158D0, #C850C0, #FFCC70);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.syntax-highlighter::-webkit-scrollbar {
+  width: 8px;
+}
+
+.syntax-highlighter::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.syntax-highlighter::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.syntax-highlighter::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
