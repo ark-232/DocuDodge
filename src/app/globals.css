@@ -61,3 +61,14 @@ a {
 .syntax-highlighter::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.3);
 }
+
+.dark-gradient-bg {
+  background: linear-gradient(to bottom right, #1a1a2e, #16213e);
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #4158D0, #C850C0, #FFCC70);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

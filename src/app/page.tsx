@@ -1,39 +1,30 @@
 'use client'
 
-import { Box, Button, Container, Heading, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, Container, Heading, Text, VStack, HStack } from '@chakra-ui/react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-interface CodeBlockProps {
-  code: string;
-  language: string;
-  zIndex: number;
-}
-
-const CodeBlock: React.FC<CodeBlockProps> = ({ code, language, zIndex }) => (
+const CodeBlock: React.FC<{ code: string; title: string }> = ({ code, title }) => (
   <Box
     as={motion.div}
-    initial={{ x: zIndex === 10 ? -20 : 20, y: zIndex === 10 ? -20 : 20 }}
-    whileHover={{ scale: 1.05, zIndex: 20 }}
-    transition={{ duration: 0.3 } as any}
-    bg="gray.800"
+    whileHover={{ y: -5 }}
+    transition={{ duration: 0.3 }}
+    bg="whiteAlpha.100"
     borderRadius="md"
     p={4}
-    boxShadow="xl"
+    boxShadow="lg"
     width="100%"
-    height="400px"
+    height="350px"
     overflowY="auto"
-    position="absolute"
-    top="0"
-    left="0"
-    zIndex={zIndex}
+    className="syntax-highlighter"
   >
+    <Text fontSize="sm" fontWeight="bold" mb={2} color="gray.400">{title}</Text>
     <SyntaxHighlighter
-      language={language}
+      language="javascript"
       style={vscDarkPlus as any}
-      customStyle={{ backgroundColor: 'transparent' }}
+      customStyle={{ background: 'transparent' }}
     >
       {code}
     </SyntaxHighlighter>
@@ -42,8 +33,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, language, zIndex }) => (
 
 const uncommentedCode = `
 function getRandomNumber() {
-  return 4; // chosen by fair dice roll.
-            // guaranteed to be random.
+  return 4;
 }
 
 function calculateTotal(items) {
@@ -54,7 +44,6 @@ function calculateTotal(items) {
   return total;
 }
 
-// TODO: Implement machine learning algorithm here
 const result = calculateTotal([
   { price: 10, quantity: 2 },
   { price: 15, quantity: 3 }
@@ -68,7 +57,6 @@ const commentedCode = `
  * @returns {number} A perfectly random number.
  */
 function getRandomNumber() {
-  // Implementation uses advanced quantum mechanics
   return 4; // chosen by fair dice roll.
             // guaranteed to be random.
 }
@@ -98,8 +86,8 @@ console.log(result);
 export default function Home() {
   return (
     <Box className="dark-gradient-bg" minHeight="100vh" color="white">
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={12} align="center" textAlign="center" mb={20}>
+      <Container maxW="container.xl" py={16}>
+        <VStack spacing={12} align="center" textAlign="center" mb={16}>
           <Heading as="h1" size="4xl" fontWeight="bold" lineHeight="1.2">
             Transform code into
             <br />
@@ -112,24 +100,25 @@ export default function Home() {
           <Link href="/comment" passHref>
             <Button
               as={motion.button}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               size="lg"
               bgGradient="linear(to-r, purple.400, pink.400)"
               _hover={{ bgGradient: "linear(to-r, purple.500, pink.500)" }}
               color="white"
               px={8}
               fontSize="xl"
+              borderRadius="full"
             >
               Get Started
             </Button>
           </Link>
         </VStack>
 
-        <Box position="relative" height="450px" mb={20}>
-          <CodeBlock code={uncommentedCode} language="javascript" zIndex={10} />
-          <CodeBlock code={commentedCode} language="javascript" zIndex={9} />
-        </Box>
+        <HStack spacing={8} align="stretch">
+          <CodeBlock code={uncommentedCode} title="Before" />
+          <CodeBlock code={commentedCode} title="After" />
+        </HStack>
       </Container>
     </Box>
   )
