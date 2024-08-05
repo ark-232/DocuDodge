@@ -1,33 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Box, Button, Container, Heading, VStack, HStack, useToast, Text, Flex, IconButton, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react'
 import Link from 'next/link'
 import { FaCopy, FaDownload, FaMagic, FaChevronDown } from 'react-icons/fa'
 
-const CodeEditor: React.FC<{ value: string; onChange?: (value: string) => void; placeholder: string; isEditable?: boolean }> = ({ value, onChange, placeholder, isEditable = true }) => (
-    <Box
-        as="textarea"
-        value={value}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange && onChange(e.target.value)}
-        placeholder={placeholder}
-        readOnly={!isEditable}
-        height="100%"
-        width="100%"
-        p={4}
-        bg="rgba(30, 31, 48, 0.95)"
-        color="white"
-        border="1px solid"
-        borderColor="rgba(123, 104, 238, 0.3)"
-        borderRadius="md"
-        _focus={{
-            outline: 'none',
-            borderColor: 'rgba(123, 104, 238, 0.6)',
-        }}
-        fontFamily="'JetBrains Mono', monospace"
-        fontSize="14px"
-        resize="none"
-    />
+const MAX_LINES = 250;
+
+const CodeEditor: React.FC<{ value: string; onChange?: (value: string) => void; placeholder: string; isEditable?: boolean; lineCount: number }> = ({ value, onChange, placeholder, isEditable = true, lineCount }) => (
+    <Box position="relative" height="100%">
+        <Box
+            as="textarea"
+            value={value}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                const newValue = e.target.value;
+                const newLineCount = newValue.split('\n').length;
+                if (newLineCount <= MAX_LINES && onChange) {
+                    onChange(newValue);
+                }
+            }}
+            placeholder={placeholder}
+            readOnly={!isEditable}
+            height="calc(100% - 24px)"
+            width="100%"
+            p={4}
+            bg="rgba(30, 31, 48, 0.95)"
+            color="white"
+            border="1px solid"
+            borderColor="rgba(123, 104, 238, 0.3)"
+            borderRadius="md"
+            _focus={{
+                outline: 'none',
+                borderColor: 'rgba(123, 104, 238, 0.6)',
+            }}
+            fontFamily="'JetBrains Mono', monospace"
+            fontSize="14px"
+            resize="none"
+        />
+        <Text position="absolute" bottom={6} right={2} fontSize="sm" color={lineCount >= MAX_LINES ? "red.500" : "gray.500"}>
+            {lineCount}/{MAX_LINES} lines
+        </Text>
+        <Box 
+            position="absolute" 
+            bottom={0} 
+            left={0} 
+            right={0} 
+            height="4px" 
+            bg={lineCount >= MAX_LINES ? "red.500" : "green.500"} 
+            width={`${(lineCount / MAX_LINES) * 100}%`}
+        />
+    </Box>
 )
 
 const CommentStyleButton: React.FC<{ style: string; currentStyle: string; onClick: () => void }> = ({ style, currentStyle, onClick }) => (
@@ -62,10 +84,35 @@ export default function CommentPage() {
     const [comments, setComments] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [commentType, setCommentType] = useState('simple')
-    const [language, setLanguage] = useState('typescript')
+    const [language, setLanguage] = useState('')
+    const [lineCount, setLineCount] = useState(0)
     const toast = useToast()
 
+    useEffect(() => {
+        setLineCount(code.split('\n').length);
+    }, [code]);
+
     const handleSubmit = async () => {
+        if (!language) {
+            toast({
+                title: 'Language not selected',
+                description: 'Please select a programming language before generating comments.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            })
+            return;
+        }
+        if (lineCount > MAX_LINES) {
+            toast({
+                title: 'Line limit exceeded',
+                description: `Please reduce your code to ${MAX_LINES} lines or fewer.`,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            })
+            return;
+        }
         setIsLoading(true)
         try {
             const response = await fetch('/api/comment', {
@@ -109,8 +156,8 @@ export default function CommentPage() {
 
     return (
         <Box bg="#1E1F30" minHeight="100vh" color="white">
-            <Container maxW="container.xl" py={8}>
-                <VStack spacing={8} align="stretch">
+            <Container maxW="container.xl" py={6}>
+                <VStack spacing={6} align="stretch">
                     <Flex justifyContent="space-between" alignItems="center">
                         <Link href="/" passHref>
                             <Text fontSize="3xl" fontWeight="bold" color="#7B68EE">
@@ -146,21 +193,23 @@ export default function CommentPage() {
                         </HStack>
                     </Flex>
 
-                    <Flex height="calc(100vh - 200px)" gap={6}>
-                        <VStack flex={1} align="stretch">
+                    <Flex height="calc(100vh - 220px)" gap={6}>
+                        <VStack flex={1} align="stretch" height="100%">
                             <Heading size="md" mb={2}>Original Code</Heading>
                             <CodeEditor
                                 value={code}
                                 onChange={setCode}
                                 placeholder="// Paste your code here"
+                                lineCount={lineCount}
                             />
                         </VStack>
-                        <VStack flex={1} align="stretch">
+                        <VStack flex={1} align="stretch" height="100%">
                             <Heading size="md" mb={2}>Commented Code</Heading>
                             <CodeEditor
                                 value={comments}
                                 placeholder="// Your commented code will appear here"
                                 isEditable={false}
+                                lineCount={comments.split('\n').length}
                             />
                         </VStack>
                     </Flex>
@@ -192,6 +241,7 @@ export default function CommentPage() {
                             color="white"
                             size="lg"
                             px={8}
+                            isDisabled={lineCount > MAX_LINES || !language}
                         >
                             Generate Comments
                         </Button>
@@ -216,4 +266,4 @@ export default function CommentPage() {
             </Container>
         </Box>
     )
-}
+} 
