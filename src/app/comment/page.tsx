@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { FaCopy, FaDownload, FaMagic, FaChevronDown } from 'react-icons/fa'
 
 const MAX_LINES = 250;
+const MAX_REQUESTS_PER_MINUTE = 3;
+const COOLDOWN_PERIOD = 60000; // 1 minute in milliseconds
 
 const CodeEditor: React.FC<{ value: string; onChange?: (value: string) => void; placeholder: string; isEditable?: boolean; lineCount: number }> = ({ value, onChange, placeholder, isEditable = true, lineCount }) => (
     <Box position="relative" height="100%">
@@ -86,6 +88,8 @@ export default function CommentPage() {
     const [commentType, setCommentType] = useState('simple')
     const [language, setLanguage] = useState('')
     const [lineCount, setLineCount] = useState(0)
+    const [lastRequestTime, setLastRequestTime] = useState(0)
+    const [requestCount, setRequestCount] = useState(0)
     const toast = useToast()
 
     useEffect(() => {
@@ -113,6 +117,25 @@ export default function CommentPage() {
             })
             return;
         }
+
+        const now = Date.now();
+        if (now - lastRequestTime < COOLDOWN_PERIOD) {
+            if (requestCount >= MAX_REQUESTS_PER_MINUTE) {
+                toast({
+                    title: 'Rate limit reached',
+                    description: `Please wait a moment before trying again.`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                })
+                return;
+            }
+            setRequestCount(requestCount + 1);
+        } else {
+            setRequestCount(1);
+            setLastRequestTime(now);
+        }
+
         setIsLoading(true)
         try {
             const response = await fetch('/api/comment', {
@@ -120,7 +143,13 @@ export default function CommentPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ code, commentType, language }),
             })
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const data = await response.json()
+            if (data.error) {
+                throw new Error(data.error);
+            }
             setComments(data.comments)
         } catch (error) {
             toast({
@@ -209,7 +238,7 @@ export default function CommentPage() {
                                 value={comments}
                                 placeholder="// Your commented code will appear here"
                                 isEditable={false}
-                                lineCount={comments.split('\n').length}
+                                lineCount={comments ? comments.split('\n').length : 0}
                             />
                         </VStack>
                     </Flex>
@@ -266,4 +295,4 @@ export default function CommentPage() {
             </Container>
         </Box>
     )
-} 
+}
