@@ -16,7 +16,6 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: Request) {
-    // Check if the API key is available
     if (!process.env.OPENAI_API_KEY) {
         return NextResponse.json({ error: 'OpenAI API key is not configured' }, { status: 500 });
     }
@@ -24,18 +23,18 @@ export async function POST(req: Request) {
     try {
         const { code, commentType, language } = await req.json();
 
-        const systemPrompt = "You are a helpful programming assistant focused on industry standard code commenting. DO NOT STOP GENERATING UNTIL THE ENTIRE FILE IS COMPLETE, NO PLACEHOLDER TEXT.";
+        const systemPrompt = "You are a programming assistant focused on comprehensive code commenting. Comment EVERY line of code provided, including import statements, variable declarations, and closing brackets. Do not add or remove any code, only add comments.";
 
-        const userPrompt = `Given the following ${language} code, provide comments based on the specified comment type ('${commentType}'). Here are the guidelines for each comment type:
+        const userPrompt = `Add ${commentType} comments to the following ${language} code. Comment EVERY line, including imports, declarations, and closing brackets. Return ONLY the commented code, without any additional text or code tags. Here are the guidelines for each comment type:
 
-  - simple: Add brief, essential comments to explain the main purpose of functions and complex logic.
-  - moderate: Provide more detailed comments, including parameter descriptions and return values for functions.
-  - detailed: Add comprehensive comments, including function descriptions, parameter and return value explanations, and explanations for complex logic or algorithms.
-  - official: Use official documentation style (e.g., JSDoc for JavaScript) with full function descriptions, parameter and return value documentation, and any additional relevant information.
+- simple: Brief, essential comments explaining the main purpose of each line or block.
+- moderate: More detailed comments, including brief descriptions for functions and variables.
+- detailed: Comprehensive comments, explaining the purpose and functionality of each line.
+- official: Use official documentation style (e.g., JSDoc for JavaScript) where applicable, with full descriptions for functions, parameters, and return values.
 
-  Please comment the following code according to the '${commentType}' style:
+Code to comment:
 
-  ${code}`;
+${code}`;
 
         const chatCompletion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
@@ -45,7 +44,16 @@ export async function POST(req: Request) {
             ],
         });
 
-        return NextResponse.json({ comments: chatCompletion.choices[0].message.content });
+        const content = chatCompletion.choices[0].message.content;
+        
+        if (content === null) {
+            throw new Error('Received null response from OpenAI');
+        }
+
+        // Remove any code block markers (```) at the start or end of the content
+        const commentedCode = content.replace(/^```[\s\S]*?\n|```$/gm, '').trim();
+
+        return NextResponse.json({ comments: commentedCode });
     } catch (error) {
         console.error('Error in API route:', error);
         if (error instanceof Error) {
